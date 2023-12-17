@@ -2,6 +2,7 @@
 
 const User = require('../models/user');
 const express = require('express');
+//BUG Is this a bug? should new be here? 
 const router = express.Router();
 const createTokenForUser = require('../helpers/createToken');
 
