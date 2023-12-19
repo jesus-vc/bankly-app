@@ -2,7 +2,7 @@ const {
   generateMinutes,
   generateTimeWord,
   generateHours,
-} = require("./timeWord");
+} = require("./timeword");
 
 describe("generate edge case", function () {
   test("works: midnight", function () {
@@ -18,27 +18,27 @@ describe("generate edge case", function () {
 describe("generateHours", function () {
   test("works: before noon", function () {
     const output00 = generateHours("00");
-    expect(output00).toEqual({ hour: "twelve", amOrPm: "am" });
+    expect(output00).toEqual({ hourWord: "twelve", amOrPm: "am" });
 
     const output04 = generateHours("04");
-    expect(output04).toEqual({ hour: "four", amOrPm: "am" });
+    expect(output04).toEqual({ hourWord: "four", amOrPm: "am" });
 
     const output12 = generateHours("12");
-    expect(output12).toEqual({ hour: "twelve", amOrPm: "pm" });
+    expect(output12).toEqual({ hourWord: "twelve", amOrPm: "pm" });
   });
 
   test("works: after noon", function () {
     const output11 = generateHours("13");
-    expect(output11).toEqual({ hour: "one", amOrPm: "pm" });
+    expect(output11).toEqual({ hourWord: "one", amOrPm: "pm" });
 
     const output15 = generateHours("15");
-    expect(output15).toEqual({ hour: "three", amOrPm: "pm" });
+    expect(output15).toEqual({ hourWord: "three", amOrPm: "pm" });
 
     const output18 = generateHours("18");
-    expect(output18).toEqual({ hour: "six", amOrPm: "pm" });
+    expect(output18).toEqual({ hourWord: "six", amOrPm: "pm" });
 
     const output23 = generateHours("23");
-    expect(output23).toEqual({ hour: "eleven", amOrPm: "pm" });
+    expect(output23).toEqual({ hourWord: "eleven", amOrPm: "pm" });
   });
 });
 describe("generateMinutes", function () {
@@ -61,7 +61,7 @@ describe("generateMinutes", function () {
     expect(output10).toEqual("ten");
 
     const output14 = generateMinutes("14");
-    expect(output14).toEqual("forteen");
+    expect(output14).toEqual("fourteen");
 
     const output19 = generateMinutes("19");
     expect(output19).toEqual("nineteen");
@@ -149,6 +149,11 @@ describe("generate full string", function () {
   test("works: 11:37", function () {
     let output = generateTimeWord("11:37");
     expect(output).toEqual("eleven thirty seven am");
+  });
+
+  test("works: 12:03", function () {
+    let output = generateTimeWord("12:03");
+    expect(output).toEqual("twelve oh three pm");
   });
 
   test("works: 12:09", function () {

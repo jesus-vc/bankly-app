@@ -2,7 +2,7 @@
 
 - BUG #2: GET /users should not include 'email' and 'phone' in response. Only return basic info.
 
-- BUG #3: GET /users/[username] should return 404 err if no user found.
+- BUG #3: For GET /users/[username], added the missing 'throw' to throw properly a 404 err if no user found.
 
 - BUG #4: PATCH /[username] should allow a user to update information about themself.
 

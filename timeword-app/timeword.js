@@ -12,12 +12,11 @@ const generateMinutes = function (minutes) {
   ]);
 
   const teens = new Map([
-    ["suffix", "teen"],
     [10, "ten"],
     [11, "eleven"],
     [12, "twelve"],
     [13, "thirteen"],
-    [14, "forteen"],
+    [14, "fourteen"],
     [15, "fifteen"],
     [16, "sixteen"],
     [17, "seventeen"],
@@ -25,65 +24,33 @@ const generateMinutes = function (minutes) {
     [19, "nineteen"],
   ]);
 
-  const bases = new Map([
-    [10, "ten"],
+  const basesOfTen = new Map([
     [20, "twenty"],
     [30, "thirty"],
     [40, "forty"],
     [50, "fifty"],
   ]);
 
-  let outputMinutes = "";
   const inputMinutes = Number(minutes);
-  let inputArray = minutes.split("").map(Number);
 
-  if (inputMinutes >= 0 && inputMinutes <= 9) {
-    outputMinutes =
-      inputMinutes % 10 !== 0
-        ? "oh" + " " + singles.get(inputArray[1])
-        : "o'clock";
-  }
+  switch (true) {
+    case inputMinutes <= 9:
+      return inputMinutes === 0 ? "o'clock" : `oh ${singles.get(inputMinutes)}`;
 
-  if (inputMinutes >= 10 && inputMinutes <= 19) {
-    outputMinutes =
-      inputMinutes % 10 !== 0 ? teens.get(inputMinutes) : bases.get(10);
-  }
+    case inputMinutes <= 19:
+      return teens.get(inputMinutes);
 
-  if (inputMinutes >= 20 && inputMinutes <= 29) {
-    outputMinutes =
-      inputMinutes % 10 !== 0
-        ? bases.get(20) + " " + singles.get(inputArray[1])
-        : bases.get(20);
+    case inputMinutes <= 59:
+      const tens = Math.floor(inputMinutes / 10) * 10;
+      const ones = inputMinutes % 10;
+      return ones !== 0
+        ? `${basesOfTen.get(tens)} ${singles.get(ones)}`
+        : basesOfTen.get(tens);
   }
-
-  if (inputMinutes >= 30 && inputMinutes <= 39) {
-    outputMinutes =
-      inputMinutes % 10 !== 0
-        ? bases.get(30) + " " + singles.get(inputArray[1])
-        : bases.get(30);
-  }
-
-  if (inputMinutes >= 40 && inputMinutes <= 49) {
-    outputMinutes =
-      inputMinutes % 10 !== 0
-        ? bases.get(40) + " " + singles.get(inputArray[1])
-        : bases.get(40);
-  }
-
-  if (inputMinutes >= 50 && inputMinutes <= 59) {
-    outputMinutes =
-      inputMinutes % 10 !== 0
-        ? bases.get(50) + " " + singles.get(inputArray[1])
-        : bases.get(50);
-  }
-  return outputMinutes;
 };
 
-const generateHours = function (hours) {
-  hours = Number(hours);
-
+const generateHours = function (hour) {
   const hoursMap = new Map([
-    [0, "twelve"],
     [1, "one"],
     [2, "two"],
     [3, "three"],
@@ -98,21 +65,24 @@ const generateHours = function (hours) {
     [12, "twelve"],
   ]);
 
-  if (hours < 12) return { hour: hoursMap.get(hours), amOrPm: "am" };
+  const numericHour = Number(hour);
 
-  if (hours >= 12) return { hour: hoursMap.get(hours - 12), amOrPm: "pm" };
+  return {
+    hourWord: hoursMap.get(numericHour % 12 || 12),
+    amOrPm: numericHour < 12 ? "am" : "pm",
+  };
 };
 
 const generateTimeWord = function (userInput) {
   if (userInput === "00:00") return "midnight";
-  if (userInput === "12:00") return "noon";
+  else if (userInput === "12:00") return "noon";
 
-  const inputArray = userInput.split(":");
+  const [hour, minutes] = userInput.split(":");
 
-  const { hour, amOrPm } = generateHours(inputArray[0]);
+  const { hourWord, amOrPm } = generateHours(hour);
 
-  const minutes = generateMinutes(inputArray[1]);
-  return hour + " " + minutes + " " + amOrPm;
+  const minutesWord = generateMinutes(minutes);
+  return `${hourWord} ${minutesWord} ${amOrPm}`;
 };
 
 module.exports = { generateMinutes, generateHours, generateTimeWord };

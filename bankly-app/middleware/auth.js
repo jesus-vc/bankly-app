@@ -65,9 +65,9 @@ function authUser(req, res, next) {
   try {
     const token = req.body._token || req.query._token;
     if (token) {
-      // FIXES  BUG #7
+      // FIXES  BUG #1
       let payload = jwt.verify(token, SECRET_KEY);
-      // PREVIOUS VERSION CONTAINING BUG #7
+      // PREVIOUS VERSION CONTAINING BUG #1
       // let payload = jwt.decode(token);
 
       req.curr_username = payload.username;
