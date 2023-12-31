@@ -1,7 +1,7 @@
 /** Middleware for handling req authorization for routes. */
 
-const jwt = require('jsonwebtoken');
-const { SECRET_KEY } = require('../config');
+const jwt = require("jsonwebtoken");
+const { SECRET_KEY } = require("../config");
 
 /** Authorization Middleware: Requires user is logged in. */
 
@@ -10,21 +10,38 @@ function requireLogin(req, res, next) {
     if (req.curr_username) {
       return next();
     } else {
-      return next({ status: 401, message: 'Unauthorized' });
+      return next({ status: 401, message: "Unauthorized" });
     }
   } catch (err) {
     return next(err);
   }
 }
 
-/** Authorization Middleware: Requires user is logged in and is staff. */
+/** Authorization Middleware: Requires user is logged in and is admin. */
 
 function requireAdmin(req, res, next) {
   try {
     if (req.curr_admin) {
       return next();
     } else {
-      return next({ status: 401, message: 'Unauthorized' });
+      return next({ status: 401, message: "Unauthorized" });
+    }
+  } catch (err) {
+    return next(err);
+  }
+}
+
+/** Authorization Middleware: Requires logged-in user to be admin OR match /:username argument. */
+
+function requireCorrectUser(req, res, next) {
+  try {
+    if (req.curr_admin || req.curr_username === req.params.username) {
+      return next();
+    } else {
+      return next({
+        status: 401,
+        message: "Only  that user or admin can edit a user.",
+      });
     }
   } catch (err) {
     return next(err);
@@ -48,7 +65,11 @@ function authUser(req, res, next) {
   try {
     const token = req.body._token || req.query._token;
     if (token) {
-      let payload = jwt.decode(token);
+      // FIXES  BUG #1
+      let payload = jwt.verify(token, SECRET_KEY);
+      // PREVIOUS VERSION CONTAINING BUG #1
+      // let payload = jwt.decode(token);
+
       req.curr_username = payload.username;
       req.curr_admin = payload.admin;
     }
@@ -62,5 +83,6 @@ function authUser(req, res, next) {
 module.exports = {
   requireLogin,
   requireAdmin,
-  authUser
+  requireCorrectUser,
+  authUser,
 };
